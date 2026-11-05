@@ -64,7 +64,7 @@
     <ul>
       <li>本模式为<strong>一次性自测</strong>：不记录作答、不统计历史、不生成错题集，刷新或关闭本页即全部清空。</li>
       <li>提交后立即判分，并在每题下方展开正确答案与解析；<strong>填空题只给参考答案，不参与判分</strong>。</li>
-      <li>没做完也可以直接提交：<strong>未作答的题目按答错计</strong>；原卷标注「作废 / 不计成绩」的题目不计分。</li>
+      <li>没做完也可以提交：点「提交答卷」时会提示还剩几题，确认后照常判分，<strong>未作答的题目按答错计</strong>；原卷标注「作废 / 不计成绩」的题目不计分。</li>
       <li>题目内容与展示模式完全一致，可随时点右上角返回展示模式查阅。</li>
     </ul>
     <button class="btn qz-start" id="qzStart" type="button">开始答题（点击后开始计时）</button>
@@ -3137,11 +3137,11 @@ C/2023 A3由中国科学院紫金山天文台首先发现，被命名为“紫�
     return n;
   }
   function refreshProgress() {
-    var done = answeredCount();
-    if (progEl) progEl.textContent = '已答 ' + done + ' / ' + graded.length;
+    var dn = answeredCount();
+    if (progEl) progEl.textContent = '已答 ' + dn + ' / ' + graded.length;
     if (tip) {
-      tip.textContent = done < graded.length
-        ? '还有 ' + (graded.length - done) + ' 题未作答，未作答的题目提交后判为答错。'
+      tip.textContent = dn < graded.length
+        ? '还有 ' + (graded.length - dn) + ' 题未作答，未作答的题目提交后判为答错。'
         : '已全部作答，提交前可随时修改；提交后不可更改，成绩不会保存。';
     }
     // 兼容不支持 :has() 的浏览器：把选中态同步到 label 的 class
@@ -3234,7 +3234,17 @@ C/2023 A3由中国科学院紫金山天文台首先发现，被命名为“紫�
     window.scrollTo({ top: summary.getBoundingClientRect().top + window.scrollY - 90, behavior: 'smooth' });
   }
 
-  submitBtn.addEventListener('click', grade);
+  // 点击提交：有未答题先确认一次，确认后照常判分（未答按答错计）
+  function trySubmit() {
+    if (!started || done) return;
+    var left = graded.length - answeredCount();
+    if (left > 0) {
+      if (!window.confirm('还有 ' + left + ' 题未作答，未作答的题目将按答错计算。确定提交吗？')) return;
+    }
+    grade();
+  }
+
+  submitBtn.addEventListener('click', trySubmit);
 
   // 回到顶部
   var top = document.querySelector('.to-top');
