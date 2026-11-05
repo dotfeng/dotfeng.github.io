@@ -491,3 +491,118 @@ table.wl-table tr.is-hide{display:none}
   .wl-stage{margin-top:5px;white-space:normal}
   .wl-host::before,.wl-stage::before{content:attr(data-label) "：";color:var(--ink-3)}
 }
+
+/* ============================== 答题模式 ============================== */
+/* 关键：本次多处用 hidden 控制显隐，而 display:flex 会盖掉 UA 的 [hidden]，必须显式兜底 */
+.quiz-page [hidden]{display:none !important}
+.quiz-btn{background:#0f8a5f;border-color:#0f8a5f}
+.quiz-btn:hover{background:#0b6f4c;border-color:#0b6f4c}
+
+.qz-top{position:sticky;top:58px;z-index:18;display:flex;align-items:center;justify-content:space-between;
+  gap:16px;margin:0 0 16px;padding:11px 16px;background:rgba(255,255,255,.93);
+  backdrop-filter:saturate(180%) blur(10px);border:1px solid var(--line);border-radius:var(--radius);
+  box-shadow:var(--shadow)}
+.qz-top-l{min-width:0}
+.qz-title{margin:0 0 3px;font-size:17px;line-height:1.4;letter-spacing:.2px}
+.qz-sub{margin:0;font-size:12.5px;color:var(--ink-3);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.qz-pill{display:inline-block;padding:1px 8px;border-radius:999px;background:var(--brand-soft);color:var(--brand);font-weight:600}
+.qz-top-r{display:flex;align-items:center;gap:14px;flex:0 0 auto}
+.qz-timer{display:flex;align-items:center;gap:9px;padding:7px 14px 7px 12px;border-radius:10px;background:#1c2024;color:#fff}
+.qz-timer-k{font-size:11.5px;letter-spacing:.5px;color:#c3cad3;white-space:nowrap}
+.qz-timer b{font-size:21px;line-height:1;font-weight:700;letter-spacing:.6px;font-variant-numeric:tabular-nums}
+.qz-side{display:flex;flex-direction:column;align-items:flex-end;gap:1px;line-height:1.5}
+.qz-progress{font-size:12px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.qz-back{font-size:12.5px}
+
+.qz-note{margin:0 0 20px;padding:20px 24px;background:var(--card);border:1px solid var(--line);
+  border-left:4px solid var(--warn);border-radius:var(--radius);box-shadow:var(--shadow)}
+.qz-note-h{margin:0 0 10px;font-weight:700}
+.qz-note ul{margin:0 0 16px 1.15em;padding:0;font-size:14.5px;color:var(--ink-2);line-height:1.85}
+.qz-note li{margin:5px 0}
+.qz-start{padding:11px 26px}
+
+.qz-form{display:flex;flex-direction:column;gap:14px}
+.qz-q{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+  padding:18px 22px 16px;box-shadow:var(--shadow);scroll-margin-top:150px;transition:border-color .2s,box-shadow .2s}
+.qz-qhead{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.qz-badge{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;padding:0 8px;
+  border-radius:8px;background:var(--brand);color:#fff;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
+.qz-flag{font-size:11.5px;color:var(--ink-3);border:1px solid var(--line);border-radius:999px;padding:1px 8px}
+.qz-q p{margin:0 0 8px;line-height:1.9}
+.qz-q > table{max-width:100%;margin:10px auto;border-collapse:collapse;font-size:14px;display:block;overflow-x:auto}
+.qz-q > ul,.qz-q > ol{margin:8px 0 8px 1.4em;padding:0}
+
+.qz-opts{display:flex;flex-direction:column;gap:8px;margin:12px 0 2px}
+.qz-opt{display:flex;align-items:flex-start;gap:10px;padding:9px 13px;border:1px solid var(--line);
+  border-radius:10px;background:#fff;cursor:pointer;transition:.15s}
+.qz-opt:hover{border-color:#c7d3e4;background:#fafbfd}
+.qz-opt input{margin:5px 0 0;flex:0 0 auto;width:16px;height:16px;accent-color:var(--brand);cursor:pointer}
+.qz-opt input:disabled{cursor:default}
+.qz-mark{flex:0 0 auto;min-width:18px;font-weight:700;color:var(--ink-3)}
+.qz-txt{flex:1 1 auto;min-width:0;line-height:1.8}
+.qz-txt .amc-fig{max-height:96px;display:inline-block;vertical-align:middle;margin:2px 4px 2px 0}
+.qz-opt.on{border-color:var(--brand);background:var(--brand-soft)}
+.qz-opt.on .qz-mark{color:var(--brand)}
+.qz-q.is-right .qz-opt.on{border-color:#7fc9a4;background:#effaf4}
+.qz-q.is-wrong .qz-opt.on{border-color:#f04438;background:#fef3f2}
+.qz-q.is-wrong .qz-opt.on .qz-mark{color:#b42318}
+
+.qz-blank-wrap{display:block}
+.qz-blank{width:100%;padding:9px 13px;border:1px solid var(--line);border-radius:10px;background:#fff;
+  font:inherit;font-size:15px;color:var(--ink)}
+.qz-blank:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+.qz-blank:disabled{background:#f7f8fa;color:var(--ink-3)}
+
+.qz-res{margin-top:14px;padding:12px 15px;border:1px solid var(--line);border-radius:10px;background:#f7f9fc}
+.qz-res-head{margin:0 0 8px !important;font-size:13.5px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.qz-res-head b{color:var(--ok);font-size:14.5px}
+.qz-mine{font-size:12.5px;color:var(--ink-3)}
+.qz-tag{display:inline-block;padding:1px 8px;border-radius:999px;font-size:12px;font-weight:700}
+.qz-tag.ok{background:#ecfdf3;color:var(--ok);border:1px solid #b7e4cd}
+.qz-tag.bad{background:#fef3f2;color:#b42318;border:1px solid #fecdca}
+.qz-tag.skip{background:#f2f4f7;color:var(--ink-3);border:1px solid var(--line)}
+.qz-res-body{font-size:14.5px;line-height:1.9;color:var(--ink-2)}
+.qz-res-body p{margin:6px 0}
+.qz-res-body table{max-width:100%;border-collapse:collapse;font-size:13.5px;display:block;overflow-x:auto}
+
+/* 判题后的整题高亮：错题整块描红 */
+.qz-q.is-wrong{border-color:#f04438;box-shadow:0 0 0 1px #f04438,0 6px 20px rgba(240,68,56,.12)}
+.qz-q.is-wrong .qz-badge{background:#d92d20}
+.qz-q.is-wrong .qz-res{background:#fff6f5;border-color:#fecdca}
+.qz-q.is-wrong .qz-res-head b{color:#b42318}
+.qz-q.is-wrong .qz-res-body{color:#7a271a}
+.qz-q.is-right{border-color:#b7e4cd}
+.qz-q.is-right .qz-res{background:#f4fbf7;border-color:#cdeada}
+.qz-q.is-skip{opacity:.97}
+
+.qz-foot{margin:22px 0 8px;padding:18px 22px;background:var(--card);border:1px solid var(--line);
+  border-radius:var(--radius);box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px;align-items:flex-start}
+.qz-submit{padding:12px 34px;font-size:15.5px}
+.qz-submit:disabled{background:#cfd6df;border-color:#cfd6df;cursor:default}
+.qz-tip{margin:0;font-size:12.5px;color:var(--ink-3);line-height:1.7}
+.qz-summary{display:flex;align-items:center;gap:22px;flex-wrap:wrap;width:100%}
+.qz-score{display:flex;align-items:baseline;gap:5px;font-variant-numeric:tabular-nums}
+.qz-score b{font-size:40px;line-height:1;color:var(--brand)}
+.qz-score span{font-size:14px;color:var(--ink-3)}
+.qz-detail p{margin:2px 0;font-size:14px;color:var(--ink-2)}
+.c-ok{color:var(--ok)}
+.c-bad{color:#d92d20}
+
+@media (max-width:720px){
+  .qz-top{top:56px;padding:9px 12px;gap:10px}
+  .qz-title{font-size:15px}
+  .qz-sub{font-size:11.5px}
+  .qz-top-r{gap:8px}
+  .qz-timer{padding:6px 10px;gap:7px}
+  .qz-timer b{font-size:17px}
+  .qz-timer-k{font-size:10.5px}
+  .qz-side{display:none}
+  .qz-note{padding:16px 18px}
+  .qz-note ul{font-size:14px}
+  .qz-start{width:100%}
+  .qz-q{padding:14px 14px 12px}
+  .qz-opt{padding:8px 10px}
+  .qz-summary{gap:14px}
+  .qz-score b{font-size:32px}
+  .qz-submit{width:100%}
+}
