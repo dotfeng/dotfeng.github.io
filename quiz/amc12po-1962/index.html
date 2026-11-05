@@ -1003,7 +1003,12 @@ document.addEventListener('DOMContentLoaded', function () {
   if (!form || !startBtn) return;
 
   var qs = Array.prototype.slice.call(form.querySelectorAll('.qz-q'));
-  var graded = qs.filter(function (s) { return s.getAttribute('data-type') !== 'blank'; });
+  // 判分题：有选项且有答案（原卷作废 / 数据缺失的题不计分）
+  var graded = qs.filter(function (s) {
+    return s.getAttribute('data-type') !== 'blank' && s.getAttribute('data-ans');
+  });
+  var ungraded = qs.filter(function (s) { return s.getAttribute('data-type') !== 'blank' && !s.getAttribute('data-ans'); });
+  var blankN = qs.filter(function (s) { return s.getAttribute('data-type') === 'blank'; }).length;
   var t0 = 0, tid = null, started = false, done = false;
 
   function pad(n) { return (n < 10 ? '0' : '') + n; }
@@ -1034,7 +1039,13 @@ document.addEventListener('DOMContentLoaded', function () {
     return n;
   }
   function refreshProgress() {
-    if (progEl) progEl.textContent = '已答 ' + answeredCount() + ' / ' + graded.length;
+    var done = answeredCount();
+    if (progEl) progEl.textContent = '已答 ' + done + ' / ' + graded.length;
+    if (tip) {
+      tip.textContent = done < graded.length
+        ? '还有 ' + (graded.length - done) + ' 题未作答，未作答的题目提交后判为答错。'
+        : '已全部作答，提交前可随时修改；提交后不可更改，成绩不会保存。';
+    }
     // 兼容不支持 :has() 的浏览器：把选中态同步到 label 的 class
     var labels = form.querySelectorAll('.qz-opt');
     for (var i = 0; i < labels.length; i++) {
@@ -1064,10 +1075,6 @@ document.addEventListener('DOMContentLoaded', function () {
   function grade() {
     if (!started || done) return;
     var blankCount = qs.length - graded.length;
-    var emptyGraded = graded.filter(function (s) { return !s.querySelector('input:checked'); }).length;
-    if (emptyGraded > 0) {
-      if (!window.confirm('还有 ' + emptyGraded + ' 题未作答，未作答的题目将判为答错。确定提交吗？')) return;
-    }
     done = true;
     var right = 0, wrong = 0;
     var used = Date.now() - t0;
@@ -1086,6 +1093,13 @@ document.addEventListener('DOMContentLoaded', function () {
       if (type === 'blank') {
         sec.classList.add('is-skip');
         if (head) head.innerHTML = '<span class="qz-tag skip">不判分</span>填空题：以下为参考答案与解析';
+        if (res) res.hidden = false;
+        return;
+      }
+      if (!ans) {
+        sec.classList.add('is-skip');
+        for (var k = 0; k < ins.length; k++) ins[k].disabled = true;
+        if (head) head.innerHTML = '<span class="qz-tag skip">不计分</span>本题无标准答案（原卷作废或缺项）';
         if (res) res.hidden = false;
         return;
       }
@@ -1112,7 +1126,7 @@ document.addEventListener('DOMContentLoaded', function () {
       '<div class="qz-score"><b>' + right + '</b><span>/ ' + total + '</span></div>' +
       '<div class="qz-detail">' +
         '<p>答对 <b class="c-ok">' + right + '</b> 题，答错 <b class="c-bad">' + wrong + '</b> 题' +
-        (blankCount ? '，填空 <b>' + blankCount + '</b> 题不判分' : '') + '</p>' +
+        (blankCount ? '，另填空 <b>' + blankN + '</b> 题、无标准答案 <b>' + ungraded.length + '</b> 题不参与判分' : '') + '</p>' +
         '<p>正确率 ' + rate + '% · 答题耗时 ' + fmt(used) + '</p>' +
       '</div>';
 
