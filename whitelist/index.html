@@ -5,7 +5,7 @@
 <title>白名单竞赛 · 竞赛资料库</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="天文、数学竞赛资料在线阅读与 Word 下载，含答案与逐题解析">
-<link rel="stylesheet" href="/css/style.css?v=20261108">
+<link rel="stylesheet" href="/css/style.css?v=20261109">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
 
 
@@ -29,9 +29,9 @@
 
 <div class="wl-stats">
   <div class="wl-stat"><b>47</b><span>项竞赛</span></div>
-  <div class="wl-stat"><b>22</b><span>自然科学素养类</span></div>
-  <div class="wl-stat"><b>12</b><span>人文综合素养类</span></div>
-  <div class="wl-stat"><b>13</b><span>艺术体育类</span></div>
+  <a class="wl-stat wl-jump" href="#wl-1" data-sec="wl-1"><b>22</b><span>自然科学素养类</span></a>
+  <a class="wl-stat wl-jump" href="#wl-2" data-sec="wl-2"><b>12</b><span>人文综合素养类</span></a>
+  <a class="wl-stat wl-jump" href="#wl-3" data-sec="wl-3"><b>13</b><span>艺术体育类</span></a>
 </div>
 
 <div class="wl-filter">
@@ -384,6 +384,26 @@
       Array.prototype.forEach.call(chips, function (x) { x.classList.remove('on'); });
       c.classList.add('on');
       apply(c.getAttribute('data-stage'));
+    });
+  });
+
+  /* 顶部三个大类卡片：点击定位到对应分区；若已有学段筛选，先恢复「全部」以免目标分区被隐藏 */
+  var jumps = document.querySelectorAll('.wl-jump');
+  function resetFilter() {
+    Array.prototype.forEach.call(chips, function (x) { x.classList.remove('on'); });
+    var all = document.querySelector('.wl-chip[data-stage="all"]');
+    if (all) all.classList.add('on');
+    apply('all');
+  }
+  Array.prototype.forEach.call(jumps, function (a) {
+    a.addEventListener('click', function (e) {
+      var sec = document.getElementById(a.getAttribute('data-sec'));
+      if (!sec) return;
+      e.preventDefault();
+      var on = document.querySelector('.wl-chip.on');
+      if (on && on.getAttribute('data-stage') !== 'all') resetFilter();
+      sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      try { history.replaceState(null, '', '#' + sec.id); } catch (err) {}
     });
   });
 })();
