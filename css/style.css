@@ -390,3 +390,30 @@ main.wrap{flex:1 0 auto;width:100%}
   .paper-pages{gap:0}
   .paper-pages .pp{max-width:none;width:100%;border:none;box-shadow:none;border-radius:0;break-inside:avoid;page-break-inside:avoid}
 }
+
+/* ============ 数学卷：poshenloh 中英双语（含公式与图解） ============ */
+.amc-q{padding:16px 0 10px;border-bottom:1px dashed var(--line)}
+.amc-q:last-child{border-bottom:none}
+.amc-no,.amc-ans{display:flex;align-items:center;gap:8px;margin:0 0 10px;font-size:14px;color:var(--ink-2)}
+.amc-badge{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:26px;padding:0 7px;border-radius:8px;background:var(--brand);color:#fff;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums;line-height:1}
+.amc-sol .amc-badge{background:var(--ok)}
+.amc-ans b{color:var(--ok);font-size:16px}
+.amc-q p{margin:0 0 8px;line-height:1.9}
+.amc-opts{display:flex;flex-wrap:wrap;gap:6px 20px;margin:8px 0 10px}
+.amc-opt{display:inline-flex;align-items:baseline;gap:5px;min-width:96px}
+.amc-opt b{color:var(--ink-3);font-weight:600}
+.amc-lang{display:inline-block;margin:10px 0 4px;padding:1px 7px;border-radius:5px;background:var(--bg);color:var(--ink-3);font-size:11.5px;letter-spacing:.4px}
+.amc-en{color:var(--ink-2);font-size:14px}
+.amc-fig{display:block;max-width:100%;max-height:340px;width:auto;margin:10px auto;padding:6px;background:#fff;border:1px solid var(--line);border-radius:8px}
+.katex{font-size:1.02em}
+.katex-display{margin:.6em 0;overflow-x:auto;overflow-y:hidden}
+@media (max-width:720px){
+  .amc-q{padding:12px 0 8px}
+  .amc-opt{min-width:0}
+  .amc-fig{max-height:260px}
+  .amc-q p{line-height:1.85}
+}
+@media print{
+  .amc-q{break-inside:avoid}
+  .amc-fig{max-height:6cm}
+}
