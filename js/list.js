@@ -98,14 +98,24 @@
   }
 
   function textOf(d) {
-    if (!d._x) d._x = normalize(d.t + ' ' + (d.n || []).join(' ') + ' ' + (d.y || ''));
+    if (!d._x) d._x = normalize(d.t + ' ' + (d.n || []).join(' ') + ' ' + (d.y || '') + ' ' + (d.x || ''));
     return d._x;
+  }
+
+  // 纯数字词要按「完整数字」匹配：否则搜「AMC 8」会把 2018 / 2008 的卷子也算进来
+  var DIGIT_RE = {};
+  function hitTerm(hay, t) {
+    if (/^\d+$/.test(t)) {
+      var re = DIGIT_RE[t] || (DIGIT_RE[t] = new RegExp('(^|[^0-9])' + t + '([^0-9]|$)'));
+      return re.test(hay);
+    }
+    return hay.indexOf(t) >= 0;
   }
 
   function match(d, ts) {
     var hay = textOf(d);
     for (var i = 0; i < ts.length; i++) {
-      if (hay.indexOf(ts[i]) < 0) return false;
+      if (!hitTerm(hay, ts[i])) return false;
     }
     return true;
   }

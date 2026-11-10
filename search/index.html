@@ -31,7 +31,7 @@
 
 
 
-<link rel="stylesheet" href="/css/style.css?v=20261110d">
+<link rel="stylesheet" href="/css/style.css?v=20261110e">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
 
 
@@ -63,7 +63,7 @@
     <span class="sbox-ico" aria-hidden="true">
       <svg viewBox="0 0 24 24" width="17" height="17"><path d="M10.5 3a7.5 7.5 0 015.9 12.1l4.3 4.3-1.4 1.4-4.3-4.3A7.5 7.5 0 1110.5 3zm0 2a5.5 5.5 0 100 11 5.5 5.5 0 000-11z" fill="currentColor"/></svg>
     </span>
-    <input id="q" class="sbox-input" type="search" name="q" placeholder="输入年份、赛事名或关键词，如：2025、CPhO 复赛、AMC 8、天文预赛"
+    <input id="q" class="sbox-input" type="search" name="q" placeholder="输入年份、赛事名或关键词，如：2025、CPhO 复赛、AMC 8、地球科学"
            autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="搜索关键词" autofocus>
     <button class="sbox-clear" type="button" id="sClear" aria-label="清空关键词" hidden>×</button>
     <button class="sbox-btn" type="submit">搜索</button>
@@ -75,12 +75,13 @@
     <button type="button" class="sbox-tag" data-q="AMC 8">AMC 8</button>
     <button type="button" class="sbox-tag" data-q="CPhO 复赛">CPhO 复赛</button>
     <button type="button" class="sbox-tag" data-q="生物学联赛">生物学联赛</button>
-    <button type="button" class="sbox-tag" data-q="IESO">IESO</button>
+    <button type="button" class="sbox-tag" data-q="地球科学">地球科学</button>
     <button type="button" class="sbox-tag" data-q="2025">2025 年</button>
   </div>
 
   <p class="sres-stat" id="sStat" role="status" aria-live="polite">正在加载索引…</p>
   <ul class="rows sres" id="sRes"></ul>
+  <div class="sres-pager" id="sPager"></div>
   <div class="sres-empty" id="sEmpty" hidden>
     <h3>没有找到相关资料</h3>
     <p>可以换个写法试试：用赛事简称（CNAO / CPhO / AMC 8）、年份，或更短的关键词。</p>
@@ -88,7 +89,7 @@
   </div>
 </article>
 
-<script src="/js/list.js?v=20261110d"></script>
+<script src="/js/list.js?v=20261110e"></script>
 <script>window.__DOCS_INDEX__ = '/data/docs-index.json';</script>
 <script>
 (function () {
@@ -98,13 +99,42 @@
   var clearBtn = document.getElementById('sClear');
   var stat = document.getElementById('sStat');
   var ul = document.getElementById('sRes');
+  var pager = document.getElementById('sPager');
   var empty = document.getElementById('sEmpty');
-  var docs = null, lastQ = '';
+  var docs = null;
 
-  function render() {
+  var PER = 20;          // 搜索结果每页条数
+  var page = 1;          // 当前页
+  var lastKey = '';      // 上一次的关键词，用于判断要不要重置页码
+
+  function pagesOf(total) { return Math.max(1, Math.ceil(total / PER)); }
+
+  function renderPager(total) {
+    var pages = pagesOf(total);
+    if (pages <= 1) { pager.innerHTML = ''; return; }
+    var start = Math.max(1, page - 2);
+    var end = Math.min(pages, start + 4);
+    start = Math.max(1, end - 4);
+    var h = '<nav class="pager" aria-label="搜索结果分页">' +
+      '<button type="button" class="pg"' + (page === 1 ? ' disabled' : ' data-go="' + (page - 1) + '"') + '>上一页</button>';
+    for (var n = start; n <= end; n++) {
+      h += n === page
+        ? '<span class="pg cur">' + n + '</span>'
+        : '<button type="button" class="pg" data-go="' + n + '">' + n + '</button>';
+    }
+    h += '<button type="button" class="pg"' + (page === pages ? ' disabled' : ' data-go="' + (page + 1) + '"') + '>下一页</button>' +
+      '</nav>';
+    pager.innerHTML = h;
+  }
+
+  function render(resetPage) {
     var raw = input.value.trim();
     if (docs === null) return;
     clearBtn.hidden = raw.length === 0;
+
+    // 关键词变了就回到第一页；单纯翻页时保持当前页
+    if (resetPage !== false) page = 1;
+    if (raw !== lastKey) { lastKey = raw; page = 1; }
 
     var list = raw ? R.query(docs, raw) : docs.slice(0, 12);
     var mk = raw ? R.marker(R.terms(raw)) : null;
@@ -112,32 +142,42 @@
     if (raw && list.length === 0) {
       ul.innerHTML = '';
       ul.hidden = true;
+      pager.innerHTML = '';
       empty.hidden = false;
       stat.textContent = '「' + raw + '」没有匹配结果';
       return;
     }
     ul.hidden = false;
     empty.hidden = true;
-    R.render(ul, list, mk);
+
+    var total = list.length;
+    var pages = pagesOf(total);
+    if (page > pages) page = pages;
+    var offset = (page - 1) * PER;
+    var slice = total > PER ? list.slice(offset, offset + PER) : list;
+
+    R.render(ul, slice, mk, offset);
+    renderPager(total);
 
     if (!raw) {
       stat.innerHTML = '共 <b>' + docs.length + '</b> 套资料，输入关键词开始搜索；下面是最新的 12 套。';
     } else {
-      stat.innerHTML = '「' + R.esc(raw) + '」找到 <b>' + list.length + '</b> 套资料' +
-        (list.length === docs.length ? '' : '，按相关度排序');
+      stat.innerHTML = '「' + R.esc(raw) + '」找到 <b>' + total + '</b> 套资料' +
+        (total === docs.length ? '' : '，按相关度排序') +
+        (pages > 1 ? '，第 <b>' + page + '</b>/' + pages + ' 页' : '');
     }
-    if (raw !== lastQ) {
-      lastQ = raw;
-      try {
-        var url = location.pathname + (raw ? '?q=' + encodeURIComponent(raw) : '');
-        history.replaceState(null, '', url);
-      } catch (e) { /* file:// 下忽略 */ }
-    }
+    try {
+      var ps = new URLSearchParams();
+      if (raw) ps.set('q', raw);
+      if (page > 1) ps.set('p', String(page));
+      var qs = ps.toString();
+      history.replaceState(null, '', location.pathname + (qs ? '?' + qs : ''));
+    } catch (e) { /* file:// 下忽略 */ }
   }
 
   fetch(window.__DOCS_INDEX__)
     .then(function (r) { return r.json(); })
-    .then(function (d) { docs = d.docs || []; render(); })
+    .then(function (d) { docs = d.docs || []; render(false); })
     .catch(function () {
       stat.textContent = '索引加载失败，请刷新页面重试。';
     });
@@ -160,6 +200,15 @@
     input.focus();
   });
 
+  pager.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-go]');
+    if (!b) return;
+    page = parseInt(b.getAttribute('data-go'), 10) || 1;
+    render(false);
+    var top = stat.getBoundingClientRect().top + window.pageYOffset - 70;
+    window.scrollTo({ top: top, behavior: 'smooth' });
+  });
+
   input.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') {
       e.preventDefault();
@@ -176,9 +225,13 @@
     input.focus();
   });
 
-  // 带 ?q= 直接进入时先填好再渲染
-  var q0 = new URLSearchParams(location.search).get('q');
+  // 带 ?q= / &p= 直接进入时先填好，再按该页渲染
+  var ps0 = new URLSearchParams(location.search);
+  var q0 = ps0.get('q') || '';
+  var p0 = parseInt(ps0.get('p'), 10) || 1;
   if (q0) input.value = q0;
+  lastKey = q0;
+  if (p0 > 1) page = p0;
 })();
 </script>
 
