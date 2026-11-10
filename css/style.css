@@ -263,9 +263,11 @@ kbd{display:inline-block;padding:0 5px;margin:0 1px;border:1px solid var(--line-
 .listpage .lead{margin:0 0 20px;color:var(--ink-2);font-size:14.5px}
 .listpage .lead b{color:var(--brand)}
 
-.rows{list-style:none;margin:0;padding:0}
-.row{display:grid;grid-template-columns:42px 1fr 70px 58px 64px 74px;align-items:center;gap:10px;padding:11px 10px;border-bottom:1px solid var(--line);font-size:14.5px;transition:background .12s}
-.rows li.row:nth-child(even){background:var(--card-2)}
+/* 列表：白底卡片，与分类概述、筛选条同一视觉层级 */
+.rows{list-style:none;margin:0;padding:6px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow)}
+.rows:empty{display:none}
+.row{display:grid;grid-template-columns:42px 1fr 70px 58px 64px 74px;align-items:center;gap:10px;padding:11px 10px;border-bottom:1px solid var(--line);border-radius:8px;font-size:14.5px;transition:background .12s}
+.rows > li.row:last-child{border-bottom:0}
 .row:hover{background:var(--brand-soft)}
 .row-hd{font-size:12.5px;color:var(--ink-3);font-weight:600;letter-spacing:.5px;background:none!important;padding:8px 10px;border-bottom:1px solid var(--line)}
 .row-hd:hover{background:none}
@@ -302,6 +304,8 @@ mark{background:var(--mark-bg);color:inherit;padding:0 1px;border-radius:3px}
 /* 客户端筛选结果状态 */
 .live-stat{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 6px;color:var(--ink-2);font-size:13.5px}
 .live-stat b{color:var(--brand)}
+.live-stat.is-empty{justify-content:center;flex-direction:column;gap:8px;margin:0;padding:34px 16px;background:var(--card);border:1px dashed var(--line-2);border-radius:var(--radius);font-size:14px}
+.live-stat.is-empty .ls-none{color:var(--ink-2)}
 .ls-none{color:var(--ink-3)}
 .linkbtn{border:0;background:none;padding:0;color:var(--brand);font:inherit;font-size:13.5px;cursor:pointer;text-decoration:underline}
 

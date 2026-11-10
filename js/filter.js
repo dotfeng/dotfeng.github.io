@@ -28,7 +28,8 @@
   var PER = 20;
 
   var pool = null;
-  var pending = null;
+  var pending = [];
+  var loading = false;
   var liveOn = false;
   var pageOffset = 0;
 
@@ -119,9 +120,11 @@
 
     if (!slice.length) {
       liveRows.innerHTML = '';
+      liveStat.className = 'live-stat is-empty';
       liveStat.innerHTML = '<span class="ls-none">没有符合条件的结果</span>' +
         '<button type="button" class="linkbtn" data-reset>清除筛选条件</button>';
     } else {
+      liveStat.className = 'live-stat';
       R.render(liveRows, slice, state.q ? R.marker(R.terms(state.q)) : null, pageOffset);
       liveStat.innerHTML = '筛选后共 <b>' + list.length + '</b> 套' +
         (pages > 1 ? '，第 <b>' + state.page + '</b>/' + pages + ' 页' : '');
@@ -142,6 +145,8 @@
     arr.forEach(function (y) { h += '<option value="' + y + '">' + y + ' 年</option>'; });
     yearSel.innerHTML = h;
     yearSel.value = state.year || '';
+    // URL 里的年份不在当前分类里时，退回「全部年份」，避免筛出空结果
+    if (yearSel.value !== (state.year || '')) state.year = '';
   }
 
   function enterLive() {
@@ -154,21 +159,28 @@
   }
 
   function ensure(cb) {
-    if (pool) { cb(); return; }
-    if (pending) { pending.push(cb); return; }
-    pending = [cb];
     enterLive();
-    liveStat.textContent = '正在加载索引…';
+    load(cb);
+  }
+
+  /* 取索引并缓存；cb 传 null 表示静默预取（只填年份下拉，不切换视图） */
+  function load(cb) {
+    if (pool) { if (cb) cb(); return; }
+    if (cb) pending.push(cb);
+    if (loading) return;
+    loading = true;
+    if (cb) liveStat.textContent = '正在加载索引…';
     fetch(IDX).then(function (r) { return r.json(); }).then(function (d) {
-      var all = d.docs || [];
-      pool = all.filter(inCat);
+      pool = (d.docs || []).filter(inCat);
       fillYears();
+      loading = false;
       var q = pending;
-      pending = null;
+      pending = [];
       q.forEach(function (fn) { fn(); });
     }).catch(function () {
-      pending = null;
-      liveStat.textContent = '索引加载失败，请刷新页面重试。';
+      loading = false;
+      pending = [];
+      if (cb) liveStat.textContent = '索引加载失败，请刷新页面重试。';
     });
   }
 
@@ -182,6 +194,10 @@
     liveWrap.hidden = true;
     staticWrap.hidden = false;
     resetBtn.hidden = true;
+    liveRows.innerHTML = '';
+    livePager.innerHTML = '';
+    liveStat.className = 'live-stat';
+    liveStat.textContent = '';
     try { history.replaceState(null, '', BASE); } catch (e) { /* noop */ }
   }
 
@@ -236,10 +252,16 @@
   });
 
   box.addEventListener('click', function (e) {
-    var r = e.target.closest('[data-reset]');
-    if (r) { e.preventDefault(); reset(); return; }
     var g = e.target.closest('[data-go]');
     if (g) { e.preventDefault(); go(parseInt(g.getAttribute('data-go'), 10) || 1); }
+  });
+
+  /* 「清除筛选条件」在结果区（不在筛选条里），事件挂到文档上 */
+  document.addEventListener('click', function (e) {
+    var r = e.target.closest ? e.target.closest('[data-reset]') : null;
+    if (!r || r.disabled) return;
+    e.preventDefault();
+    reset();
   });
 
   livePager.addEventListener('click', function (e) {
@@ -247,6 +269,27 @@
     if (!g) return;
     go(parseInt(g.getAttribute('data-go'), 10) || 1);
   });
+
+  /* ---------- 首屏：默认「全部」选中，并静默预取年份选项 ---------- */
+  syncType();
+
+  (function preload() {
+    // 年份下拉的选项来自索引，先静默取一次，避免「年份不可选」
+    var idle = window.requestIdleCallback
+      ? function (fn) { window.requestIdleCallback(fn, { timeout: 2000 }); }
+      : function (fn) { setTimeout(fn, 900); };
+    idle(function () { load(null); });
+
+    // 鼠标/键盘一靠近筛选条就立刻取，比 idle 更快
+    var tools = box.querySelector('.frow-tools');
+    if (!tools) return;
+    var evts = ['pointerenter', 'focusin', 'touchstart'];
+    function once() {
+      load(null);
+      evts.forEach(function (t) { tools.removeEventListener(t, once); });
+    }
+    evts.forEach(function (t) { tools.addEventListener(t, once); });
+  })();
 
   /* ---------- 带参数进入时直接激活客户端模式 ---------- */
   (function init() {
