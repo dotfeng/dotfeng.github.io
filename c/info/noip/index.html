@@ -75,6 +75,11 @@
   <p class="lead">NOIP 自 1995 年起每年举办，2025 年联赛题面共 4 题。</p>
 
   
+  <section class="cat-intro collapsed" id="catIntro">
+    <div class="ci-body"><p>全国青少年信息学奥林匹克联赛（National Olympiad in Informatics in Provinces，简称 NOIP）由中国计算机学会（CCF）主办，1995 年创办，是 NOI 系列活动中参与面最广的一级赛事，也是各省选拔省队的主要依据。2019 年因竞赛管理政策调整暂停一届，同期 CCF 首次开设 CSP-J/S 认证；2020 年恢复举办，并把 CSP-S 第二轮成绩作为报名前置条件。</p><h4>赛制</h4><p>每年 11 月下旬在各省赛区同步举行，2025 年为 11 月 29 日 8:30—13:00，4.5 小时、4 道题，机试，参赛免费。报名资格限在籍在校高中生，名额分 A（基本）、B（激励）、C（推荐）三类，由各省 NOI 特派员依据 CSP-S 第二轮成绩与名额分配方案确定；达到提高级全国一等基准线的初中生可申请「体验」名额。选手统一在 NOI Linux 环境下用 C++ 作答，赛后源程序提交 CCF 评测。</p><h4>命题特点</h4><p>难度介于 CSP-S 与 NOI 之间，题目以传统型为主，覆盖模拟、枚举、动态规划、图论、树结构与常用数据结构，偶有数学与字符串题。每题都给出完整的数据范围表并按子任务分档给分，正解通常要在朴素算法上再做一层优化，因此能否在 4.5 小时内稳拿前两题、在后两题尽量多拿部分分，往往就是省一线与省队线的差距。</p><h4>本站收录</h4><p>收录 2025 年 NOIP 题面 1 套共 4 题（糖果店、清仓甩卖、树的价值、序列询问）。官网对更早年份的 NOIP 只发布测试数据、未附题面，按约定本站不整理这类年份，因此联赛目前仅有这一届可在线阅读；每题配套数据仍在官网，页面内已给出原始发布页链接。</p></div>
+    <button class="ci-more" type="button" aria-expanded="false" aria-controls="catIntro">展开全文</button>
+  </section>
+  
 
   <div class="filters" data-filters data-cat="info/noip" data-base="/c/info/noip/" data-index="/data/docs-index.json">
     
@@ -189,6 +194,33 @@
   
 </article>
 
+
+<script>
+(function () {
+  var box = document.getElementById('catIntro');
+  if (!box) return;
+  var body = box.querySelector('.ci-body');
+  var btn = box.querySelector('.ci-more');
+  if (!body || !btn) return;
+
+  // 内容没有超过折叠高度就不显示按钮，也不折叠
+  if (body.scrollHeight - body.clientHeight < 8) {
+    box.classList.remove('collapsed');
+    btn.parentNode.removeChild(btn);
+    return;
+  }
+
+  btn.addEventListener('click', function () {
+    var collapsed = box.classList.toggle('collapsed');
+    btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    btn.textContent = collapsed ? '展开全文' : '收起';
+    if (collapsed) {
+      var top = box.getBoundingClientRect().top + window.pageYOffset - 70;
+      window.scrollTo({ top: top, behavior: 'smooth' });
+    }
+  });
+})();
+</script>
 
 
 </main>

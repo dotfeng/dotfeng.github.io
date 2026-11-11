@@ -75,6 +75,11 @@
   <p class="lead">NOI 金牌选手组成国家集训队后的集中培训，三天三试；2025、2026 年题面。</p>
 
   
+  <section class="cat-intro collapsed" id="catIntro">
+    <div class="ci-body"><p>国际信息学奥林匹克（International Olympiad in Informatics，简称 IOI）1989 年由联合国教科文组织发起、首次在保加利亚举办，是五大国际科学奥林匹克之一，每年一届，每个国家（地区）最多派 4 名选手。中国队选手由 NOI 金牌得主组成的 IOI 中国国家集训队产生：经分阶段线上训练、线下集中考核与多轮遴选，并在次年冬令营期间完成论文答辩，最终确定 4 人国家队名单。第 38 届（IOI 2026）2026 年 8 月在乌兹别克斯坦塔什干举行，97 个国家及地区的 375 名选手参赛，中国队获 3 金 1 银、团体第一；第 39 届将在德国举行。</p><h4>集训与测试</h4><p>集训队的集中培训由 CCF 组织，通常连续数天，含专题讲座、论文交流与多场测试（本站按惯例称「试」），每试 3 题、5 小时，评测方式与 IOI 一致。集训测试成绩和论文答辩共同构成国家队选拔依据，因此集训题目的难度、题型与赛制都向 IOI 靠拢，是观察当年国际赛风向最直接的窗口。</p><h4>命题特点</h4><p>以原创题与改编题为主，覆盖高级数据结构、复杂动态规划与优化、图论建模、计算几何，以及交互型与构造型题目。单题的数据范围与子任务划分比 NOI 更细，常需要针对不同子任务分别写多档算法；在 5 小时 3 题的节奏下，取舍与部分分策略本身就是训练重点。</p><h4>本站收录</h4><p>收录 2025、2026 两届集训的测试题面共 2 套，每套三试、每试 3 题（如 2026 届第一试为异形工厂、字符串问题、三选二）。集训按 IOI 届别命名，实际在上一年 12 月举办——IOI 2026 集训的三试安排在 2025 年 12 月 2—4 日，页面沿用官网的集训命名，未改记年份。IOI 正式赛题由主办国赛后统一发布，本站暂未收录；集训的数据文件仍在官网，页面内已给出原始发布页链接。</p></div>
+    <button class="ci-more" type="button" aria-expanded="false" aria-controls="catIntro">展开全文</button>
+  </section>
+  
 
   <div class="filters" data-filters data-cat="info/camp" data-base="/c/info/camp/" data-index="/data/docs-index.json">
     
@@ -198,6 +203,33 @@
   
 </article>
 
+
+<script>
+(function () {
+  var box = document.getElementById('catIntro');
+  if (!box) return;
+  var body = box.querySelector('.ci-body');
+  var btn = box.querySelector('.ci-more');
+  if (!body || !btn) return;
+
+  // 内容没有超过折叠高度就不显示按钮，也不折叠
+  if (body.scrollHeight - body.clientHeight < 8) {
+    box.classList.remove('collapsed');
+    btn.parentNode.removeChild(btn);
+    return;
+  }
+
+  btn.addEventListener('click', function () {
+    var collapsed = box.classList.toggle('collapsed');
+    btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    btn.textContent = collapsed ? '展开全文' : '收起';
+    if (collapsed) {
+      var top = box.getBoundingClientRect().top + window.pageYOffset - 70;
+      window.scrollTo({ top: top, behavior: 'smooth' });
+    }
+  });
+})();
+</script>
 
 
 </main>

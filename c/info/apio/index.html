@@ -75,6 +75,11 @@
   <p class="lead">2007 年创办，每年 5 月各国同步网上竞赛；2026 年中国区题面 3 题。</p>
 
   
+  <section class="cat-intro collapsed" id="catIntro">
+    <div class="ci-body"><p>亚洲和太平洋地区信息学奥林匹克（Asia-Pacific Informatics Olympiad，简称 APIO）创办于 2007 年，由亚太地区各国家和地区的信息学奥赛组织者共同发起，是区域性国际赛事，每年 5 月举行。与 IOI 集中在主办国办赛不同，APIO 采用「同一时段、各自赛点」的网络赛形式：各参赛方在本国（地区）设点，同一时间开赛，赛后统一公布成绩。中国区活动由中国计算机学会（CCF）主办，2026 年由北京大学附属中学承办，5 月 7—11 日在北京举行，同期安排专题讲座、交流与社会实践。</p><h4>赛制</h4><p>比赛 5 小时、3 道题，机试，每题 100 分、按测试点给分。题面以英文发布，各参赛方自行翻译为母语，中国区提供中英文对照版本。参赛选手由各省通过 NOI 系列活动选拔推荐，中国区按 APIO 成绩评定金、银、铜牌。</p><h4>命题特点</h4><p>难度高于 NOIP，整体向 IOI 看齐。题目从各成员提交的候选题中遴选，风格偏国际赛：交互型、构造型以及需要精细复杂度分析的题目出现频率较高，有的题要求选手实现与评测库通信。3 题 5 小时的节奏比 NOI 单试更紧，读题速度与部分分策略的重要性不亚于算法本身。</p><h4>本站收录</h4><p>收录 APIO 2026 中国区题面 1 套共 3 题（上升 ascend、蛋糕 cake（交互型）、集宝 gems），中英文对照。官网以 CC BY-NC 授权发布题面与数据，本站只收录题面，数据文件仍指向官网原始发布页。</p></div>
+    <button class="ci-more" type="button" aria-expanded="false" aria-controls="catIntro">展开全文</button>
+  </section>
+  
 
   <div class="filters" data-filters data-cat="info/apio" data-base="/c/info/apio/" data-index="/data/docs-index.json">
     
@@ -189,6 +194,33 @@
   
 </article>
 
+
+<script>
+(function () {
+  var box = document.getElementById('catIntro');
+  if (!box) return;
+  var body = box.querySelector('.ci-body');
+  var btn = box.querySelector('.ci-more');
+  if (!body || !btn) return;
+
+  // 内容没有超过折叠高度就不显示按钮，也不折叠
+  if (body.scrollHeight - body.clientHeight < 8) {
+    box.classList.remove('collapsed');
+    btn.parentNode.removeChild(btn);
+    return;
+  }
+
+  btn.addEventListener('click', function () {
+    var collapsed = box.classList.toggle('collapsed');
+    btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    btn.textContent = collapsed ? '展开全文' : '收起';
+    if (collapsed) {
+      var top = box.getBoundingClientRect().top + window.pageYOffset - 70;
+      window.scrollTo({ top: top, behavior: 'smooth' });
+    }
+  });
+})();
+</script>
 
 
 </main>
