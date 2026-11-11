@@ -75,6 +75,11 @@
   <p class="lead">2019 年首次开设，分入门级（J）与提高级（S）；2025 年第二轮认证题面。</p>
 
   
+  <section class="cat-intro collapsed" id="catIntro">
+    <div class="ci-body"><p>CCF 非专业级软件能力认证（Certified Software Professional，简称 CSP-J/S）由中国计算机学会（CCF）主办，2019 年首次举办，分 CSP-J（入门级，Junior）与 CSP-S（提高级，Senior）两个组别。与 NOI、NOIP 限定在校学生不同，CSP-J/S 面向社会非专业人士，年满 12 周岁即可报名，是信息学竞赛体系里门槛最低、参与面最广的一环，也是通往 NOIP 与各省省选的前置台阶。</p><h4>赛制</h4><p>分第一轮与第二轮两个阶段：第一轮为集中笔试（客观题），成绩达到本省分数线者进入第二轮；第二轮为现场集中上机编程。两组可单独或同时参加，每轮每组 4 道题。2025 年第一轮在 9 月 20 日（入门级 9:30—11:30、提高级 14:30—16:30），第二轮在 11 月 1 日（入门级 8:30—12:00、提高级 14:30—18:30）。第一轮认证点由各省设置、每点不少于 20 人，第二轮每省只设一个认证点；晋级分数线由各省按名额与考点容量划定，另有 GESP 衔接、教练推荐等奖励名额。</p><h4>命题特点</h4><p>入门级的难度与初中生编程基础相当，侧重模拟、枚举、简单排序、前缀和与基础递推；提高级明显加码，涉及动态规划、图论基础、树结构、二分与贪心，接近 NOIP 前两题的水平。两轮都是 4 题、按测试点给分，正解写不出时用暴力拿部分分是常态策略。CSP-S 第二轮成绩是报名 NOIP 的前提，因此提高级第二轮也是多数选手真正开始「打比赛」的起点。</p><h4>本站收录</h4><p>收录 CSP-J/S 2025 第二轮认证题面 1 套，含入门级（拼数、座位、异或和、多边形）与提高级（社团招新、道路修复、谐音替换、员工招聘）两卷，各 4 题。第一轮为客观题笔试，官网不公开发布试卷，本站未收录；第二轮的测试数据仍在官网，页面内已给出原始发布页链接。</p></div>
+    <button class="ci-more" type="button" aria-expanded="false" aria-controls="catIntro">展开全文</button>
+  </section>
+  
 
   <div class="filters" data-filters data-cat="info/csp" data-base="/c/info/csp/" data-index="/data/docs-index.json">
     
@@ -189,6 +194,33 @@
   
 </article>
 
+
+<script>
+(function () {
+  var box = document.getElementById('catIntro');
+  if (!box) return;
+  var body = box.querySelector('.ci-body');
+  var btn = box.querySelector('.ci-more');
+  if (!body || !btn) return;
+
+  // 内容没有超过折叠高度就不显示按钮，也不折叠
+  if (body.scrollHeight - body.clientHeight < 8) {
+    box.classList.remove('collapsed');
+    btn.parentNode.removeChild(btn);
+    return;
+  }
+
+  btn.addEventListener('click', function () {
+    var collapsed = box.classList.toggle('collapsed');
+    btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    btn.textContent = collapsed ? '展开全文' : '收起';
+    if (collapsed) {
+      var top = box.getBoundingClientRect().top + window.pageYOffset - 70;
+      window.scrollTo({ top: top, behavior: 'smooth' });
+    }
+  });
+})();
+</script>
 
 
 </main>

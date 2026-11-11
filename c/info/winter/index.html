@@ -75,6 +75,11 @@
   <p class="lead">自 1995 年起每年冬季举办，含培训、交流与编程测试；2026 年测试题面 3 题。</p>
 
   
+  <section class="cat-intro collapsed" id="catIntro">
+    <div class="ci-body"><p>全国青少年信息学奥林匹克冬令营（NOI 冬令营）自 1995 年起每年冬季举办，由 CCF 主办、各省承办，是 NOI 系列活动中以培训与交流为主、同时含一场测试的赛事：为期一周左右，白天安排面向营员的第一课堂、第二课堂讲座，穿插国家集训队论文交流与教师片段教学比赛，同期举行 IOI 中国国家队的选拔测试与答辩。2026 年冬令营于 2 月 6—13 日在青岛市城阳第一高级中学举行，31 个省区市近 800 名师生参加，中国澳门代表队首次亮相。</p><h4>赛制</h4><p>学生营员在营期参加一场 5 小时的测试（2026 年为 2 月 9 日 8:00—13:00，3 道题，全传统型），按成绩评定金、银、铜牌，2026 年共产生金牌 56 名、银牌 137 名、铜牌 147 名。国家集训队员另有两天选拔测试与论文答辩，最终确定 4 人组成 IOI 中国国家队。营员分正式（集训队员、承办校推荐）、非正式（按 NOI 成绩分配到省的名额与各省名额）、超额（需 CCF 根据报名情况核定）三类，学生限在籍在校中学生，按 CSP-J/S 第二轮成绩排序确定。</p><h4>命题特点</h4><p>难度与 NOI 相当，个别题对标 IOI。3 道题 5 小时，题型以传统型为主，考查高级数据结构、复杂动态规划、图论建模与精细的复杂度分析；每题的数据范围与子任务划分细致，正解常需要组合多种技巧。2026 年冬令营首次并行设立「AI 辅助编程测试」，30 名受邀选手在相同题目与软硬件环境下可调用指定大模型作答，单独评奖。</p><h4>本站收录</h4><p>收录 2026 年冬令营测试题面 1 套共 3 题（二进制 binary、猫和老鼠 game、画树 paint）。营期的讲座、论文交流与教师教学比赛没有公开讲义，本站未收录；测试数据仍在官网，页面内已给出原始发布页链接。</p></div>
+    <button class="ci-more" type="button" aria-expanded="false" aria-controls="catIntro">展开全文</button>
+  </section>
+  
 
   <div class="filters" data-filters data-cat="info/winter" data-base="/c/info/winter/" data-index="/data/docs-index.json">
     
@@ -189,6 +194,33 @@
   
 </article>
 
+
+<script>
+(function () {
+  var box = document.getElementById('catIntro');
+  if (!box) return;
+  var body = box.querySelector('.ci-body');
+  var btn = box.querySelector('.ci-more');
+  if (!body || !btn) return;
+
+  // 内容没有超过折叠高度就不显示按钮，也不折叠
+  if (body.scrollHeight - body.clientHeight < 8) {
+    box.classList.remove('collapsed');
+    btn.parentNode.removeChild(btn);
+    return;
+  }
+
+  btn.addEventListener('click', function () {
+    var collapsed = box.classList.toggle('collapsed');
+    btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    btn.textContent = collapsed ? '展开全文' : '收起';
+    if (collapsed) {
+      var top = box.getBoundingClientRect().top + window.pageYOffset - 70;
+      window.scrollTo({ top: top, behavior: 'smooth' });
+    }
+  });
+})();
+</script>
 
 
 </main>
